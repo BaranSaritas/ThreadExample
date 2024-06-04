@@ -4,6 +4,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.util.Scanner;
+
 @SpringBootApplication
 public class ThreadExampleApplication implements CommandLineRunner {
 
@@ -13,24 +15,13 @@ public class ThreadExampleApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Thread thread = new Thread(new Deneme());
-		thread.start();
-	}
+		Deneme deneme = new Deneme();
+		deneme.start(); // thread baslattim
+		Thread.sleep(2000);
+		deneme.shutdown();
+	 }
 
 
 
-	public class Deneme implements Runnable {
-
-		@Override
-		public void run() {
-			for (int i = 0; i < 5; i++) {
-				System.out.println("Hello: " + i + " Thread: " + Thread.currentThread().getName());
-
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ignored) {}
-			}
-		}
-	}
 }
 
