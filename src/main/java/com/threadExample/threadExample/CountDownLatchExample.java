@@ -27,7 +27,6 @@ public class CountDownLatchExample {
         }
         executor.shutdown();
 
-
        try {
 
             latch.await();
@@ -55,14 +54,11 @@ public class CountDownLatchExample {
             e.printStackTrace();
         }
 
-
-
         System.out.println("Completed.");
 
     }
 
 }
-
 
 class Processor implements Runnable {
 
