@@ -1,5 +1,7 @@
 package com.threadExample.threadExample.ReentrantLocksExample;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -25,6 +27,7 @@ public class Runner {
     private Lock lock = new ReentrantLock(); // ReentrantLock ile bir kilit nesnesi oluşturuluyor
     private Condition cond = lock.newCondition(); // Bu kilit üzerinde bir koşul nesnesi oluşturuluyor
     private long totalLockTime = 0;
+    private List<String> waitingThreads = new ArrayList<>(); // Bekleyen iş parçacıkları listesi
 
     private void increment() {
         for (int i = 0; i < 10000; i++) {
@@ -61,12 +64,19 @@ public class Runner {
 
     //threadleri daha iyi anlamak icin bir örnek
     public void threadAction(String threadName) throws InterruptedException {
+        synchronized (this) {
+            waitingThreads.add(threadName); // İş parçacığını bekleyenler listesine ekle
+        }
+
         long startTime = System.nanoTime();
         lock.lock();
+        synchronized (this) {
+            waitingThreads.remove(threadName); // İş parçacığını bekleyenler listesinden çıkar
+        }
         totalLockTime += System.nanoTime() - startTime;
 
         System.out.println(threadName + " kilidi aldı. Kilit durumu: " + lock.toString());
-        System.out.println("Bekleyen iş parçacıkları: " + Thread.currentThread().getName());
+        System.out.println("Bekleyen iş parçacıkları: " + waitingThreads);
 
         try {
             increment();
@@ -78,6 +88,7 @@ public class Runner {
             System.out.println(threadName + " kilidi bıraktı. Kilit durumu: " + lock.toString());
         }
     }
+
 
     public void checkLockStatus() throws InterruptedException {
         while (true) {
